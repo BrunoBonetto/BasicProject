@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">BasicProject</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="login">Login</string>
+    <string name="error_title_invalid_credentials">Invalid credentials</string>
+    <string name="error_body_invalid_credentials">Please check your username and password and try again.</string>
+    <string name="error_title_empty_response">No data found</string>
+    <string name="error_body_empty_response">The server returned no information. Please try again later.</string>
+    <string name="error_title_server">Server error</string>
+    <string name="error_body_server">An unexpected error occurred while processing your request. Please try again shortly.</string>
+    <string name="error_title_local_storage">Server error</string>
+    <string name="error_body_local_storage">An unexpected error occurred while saving your data. Please try again shortly.</string>
+    <string name="welcome_user">Welcome %1$s</string>">
+    <string name="email">Email: %1$s</string>
+    <string name="error">Error</string>
+    <string name="ok">OK</string>
+</resources>
