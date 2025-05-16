@@ -8,7 +8,7 @@ data class LoginResponse(
     @SerializedName("username")
     val userName: String,
     val email: String,
-    val token: String
+    val accessToken: String
 )
 
 fun LoginResponse.toEntity(): UserEntity {

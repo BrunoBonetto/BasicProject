@@ -64,7 +64,7 @@ fun LoginScreen(sharedUserViewModel: SharedUserViewModel, onNavigateToHome: () -
             is CurrentUserState.Loading -> {
 
             }
-            is CurrentUserState.Idle -> {
+            is CurrentUserState.Unloaded -> {
 
             }
             is CurrentUserState.Error -> {
