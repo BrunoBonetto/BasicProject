@@ -6,7 +6,7 @@ import com.example.basicproject.core.session.domain.SessionManager
 import com.example.basicproject.login.domain.repository.LoginRepository
 import com.example.basicproject.login.domain.result.LoginResult
 import com.example.basicproject.login.data.remote.model.toEntity
-import com.example.basicproject.login.ui.state.CurrentUserState
+import com.example.basicproject.user.presentation.state.CurrentUserState
 import com.example.basicproject.login.ui.state.LoginUiState
 import com.example.basicproject.user.data.local.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel

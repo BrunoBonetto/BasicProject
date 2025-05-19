@@ -1,4 +1,4 @@
-package com.example.basicproject.core.shared
+package com.example.basicproject.user.presentation
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -16,5 +16,9 @@ class SharedUserViewModel @Inject constructor() : ViewModel() {
 
     fun setUser(user: UserEntity) {
         userState = UserState.LoggedIn(user)
+    }
+
+    fun clearUser(){
+        userState = UserState.NotLoggedIn
     }
 }

@@ -5,10 +5,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import com.example.basicproject.core.shared.SharedUserViewModel
+import com.example.basicproject.user.presentation.SharedUserViewModel
 import com.example.basicproject.login.ui.LoginScreen
 import com.example.basicproject.home.navigation.HomeNavRoutes
-import com.example.basicproject.sessions.navigation.SessionNavRoutes
+import com.example.basicproject.main.navigations.SessionNavRoutes
 import com.example.basicproject.splash.navigation.SplashNavRoutes
 import com.example.basicproject.splash.ui.SplashScreen
 
