@@ -2,10 +2,11 @@ package com.example.basicproject.login.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.basicproject.core.session.domain.SessionManager
 import com.example.basicproject.login.domain.repository.LoginRepository
 import com.example.basicproject.login.domain.result.LoginResult
 import com.example.basicproject.login.data.remote.model.toEntity
-import com.example.basicproject.login.ui.state.CurrentUserState
+import com.example.basicproject.user.presentation.state.CurrentUserState
 import com.example.basicproject.login.ui.state.LoginUiState
 import com.example.basicproject.user.data.local.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -21,10 +22,11 @@ import javax.inject.Inject
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     private val repository: LoginRepository,
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val sessionManager: SessionManager
 ): ViewModel() {
 
-    private val _currentUserState = MutableStateFlow<CurrentUserState>(CurrentUserState.Idle)
+    private val _currentUserState = MutableStateFlow<CurrentUserState>(CurrentUserState.Unloaded)
     val currentUserState: StateFlow<CurrentUserState> = _currentUserState.asStateFlow()
 
     private val _uiState = MutableStateFlow<LoginUiState>(LoginUiState.Idle)
@@ -41,6 +43,7 @@ class LoginViewModel @Inject constructor(
                 is LoginResult.Success -> {
                     try{
                         userRepository.saveUser(result.user.toEntity())
+                        sessionManager.saveSession(result.user.accessToken)
                         _currentUserState.value = CurrentUserState.Success(result.user.toEntity())
                         _uiEvent.emit(LoginUiEvent.LoginSuccess)
                     }catch (e: Exception){
@@ -70,9 +73,4 @@ class LoginViewModel @Inject constructor(
             }
         }
     }
-
-    fun resetState() {
-        _uiState.value = LoginUiState.Idle
-    }
-
 }

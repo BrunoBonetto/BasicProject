@@ -1,54 +1,70 @@
 package com.example.basicproject.home.ui
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.basicproject.R
-import com.example.basicproject.core.shared.SharedUserViewModel
 import com.example.basicproject.user.domain.model.UserState
+import com.example.basicproject.user.presentation.SharedUserViewModel
+import com.example.basicproject.user.presentation.state.CurrentUserState
 
 @Composable
-fun HomeScreen(sharedUserViewModel: SharedUserViewModel) {
+fun HomeScreen(
+    sharedUserViewModel: SharedUserViewModel,
+    onNavigateToLogin: () -> Unit
+) {
 
-    val userState by remember { derivedStateOf { sharedUserViewModel.userState } }
+    val viewModel: HomeViewModel = hiltViewModel()
+    val currentUserState by viewModel.currentUserState.collectAsState()
 
-    when (userState) {
-        is UserState.LoggedIn -> {
-            val user = (userState as UserState.LoggedIn).user
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ){
-                Text(
-                    text = stringResource(R.string.welcome_user, user.userName),
-                    style = MaterialTheme.typography.headlineMedium
-                )
+    BackHandler(enabled = true){}
 
-                Spacer(modifier = Modifier.height(16.dp))
-
-                Text(
-                    text = stringResource(R.string.email, user.email),
-                    style = MaterialTheme.typography.bodyMedium
-                )
-            }
-        }
-
-        UserState.NotLoggedIn -> {
-            Text("Usuário não autenticado.")
+    LaunchedEffect(Unit) {
+        val userState = sharedUserViewModel.userState
+        if (userState is UserState.LoggedIn) {
+            viewModel.setUser(userState.user)
         }
     }
 
+    LaunchedEffect(Unit) {
+        viewModel.uiEvent.collect { event ->
+            when (event) {
+                is HomeUiEvent.LogoutSuccess -> {
+                    onNavigateToLogin()
+                }
 
+                is HomeUiEvent.LogoutError -> {
+
+                }
+            }
+        }
+    }
+
+    LaunchedEffect(currentUserState) {
+        when (currentUserState) {
+            is CurrentUserState.Success -> {}
+            is CurrentUserState.Loading -> Unit
+            CurrentUserState.Error -> Unit
+            CurrentUserState.Unloaded -> {
+                sharedUserViewModel.clearUser()
+            }
+        }
+    }
+
+    val userState = remember(currentUserState) {
+        when (currentUserState) {
+            is CurrentUserState.Success -> UserState.LoggedIn((currentUserState as CurrentUserState.Success).user)
+            else -> UserState.NotLoggedIn
+        }
+    }
+
+    HomeScreenContent(
+        userState = userState,
+        onLogoutClick = {
+            viewModel.logout()
+        }
+    )
 }

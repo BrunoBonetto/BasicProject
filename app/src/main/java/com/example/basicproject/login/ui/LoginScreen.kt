@@ -11,9 +11,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.basicproject.R
 import com.example.basicproject.core.presentation.components.dialogs.DialogState
-import com.example.basicproject.core.shared.SharedUserViewModel
+import com.example.basicproject.user.presentation.SharedUserViewModel
 import com.example.basicproject.core.utils.empty
-import com.example.basicproject.login.ui.state.CurrentUserState
+import com.example.basicproject.user.presentation.state.CurrentUserState
 
 @Composable
 fun LoginScreen(sharedUserViewModel: SharedUserViewModel, onNavigateToHome: () -> Unit) {
@@ -64,7 +64,7 @@ fun LoginScreen(sharedUserViewModel: SharedUserViewModel, onNavigateToHome: () -
             is CurrentUserState.Loading -> {
 
             }
-            is CurrentUserState.Idle -> {
+            is CurrentUserState.Unloaded -> {
 
             }
             is CurrentUserState.Error -> {

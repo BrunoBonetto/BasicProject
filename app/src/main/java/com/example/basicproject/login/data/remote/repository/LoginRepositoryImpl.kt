@@ -1,5 +1,6 @@
 package com.example.basicproject.login.data.remote.repository
 
+import com.example.basicproject.core.session.domain.result.SessionValidationResult
 import com.example.basicproject.login.data.remote.model.LoginRequest
 import com.example.basicproject.login.domain.result.LoginResult
 import com.example.basicproject.login.data.remote.api.LoginApiService
@@ -15,11 +16,9 @@ class LoginRepositoryImpl @Inject constructor(
             val response = api.login(LoginRequest(username, password))
 
             if (response.isSuccessful) {
-                val loginResponse = response.body()
-                when {
-                    loginResponse != null -> LoginResult.Success(loginResponse)
-                    else -> LoginResult.EmptyResponse
-                }
+                response.body()?.let {
+                    LoginResult.Success(it)
+                } ?: LoginResult.EmptyResponse
             } else {
                 if (response.code() == 400) {
                     LoginResult.InvalidCredentials
@@ -30,6 +29,28 @@ class LoginRepositoryImpl @Inject constructor(
 
         }catch (e: Exception){
             LoginResult.ServerError(e.message.toString())
+        }
+    }
+
+    override suspend fun getUserFromToken(token: String): SessionValidationResult {
+        return try{
+            val response = api.getUserSession("Bearer $token")
+
+            if(response.isSuccessful){
+                response.body()?.let {
+                    SessionValidationResult.Success(it)
+                } ?: SessionValidationResult.InvalidToken
+
+            }else{
+                if (response.code() == 400) {
+                    SessionValidationResult.InvalidToken
+                } else {
+
+                    SessionValidationResult.ServerError(response.message())
+                }
+            }
+        } catch (e: Exception){
+            SessionValidationResult.ServerError(e.message.toString())
         }
     }
 }
