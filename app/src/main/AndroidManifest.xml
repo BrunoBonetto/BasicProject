@@ -16,9 +16,8 @@
         android:theme="@style/Theme.BasicProject"
         tools:targetApi="31" >
         <activity
-            android:name=".core.presentation.MainActivity"
+            android:name=".main.MainActivity"
             android:exported="true"
-            android:label="@string/app_name"
             android:theme="@style/Theme.BasicProject" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
