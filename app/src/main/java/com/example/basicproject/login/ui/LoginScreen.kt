@@ -12,7 +12,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.basicproject.R
 import com.example.basicproject.core.presentation.components.dialogs.DialogState
 import com.example.basicproject.user.presentation.SharedUserViewModel
-import com.example.basicproject.core.utils.empty
+import com.example.basicproject.login.ui.state.LoginIntent
 import com.example.basicproject.user.presentation.state.CurrentUserState
 
 @Composable
@@ -22,8 +22,6 @@ fun LoginScreen(sharedUserViewModel: SharedUserViewModel, onNavigateToHome: () -
     val currentUserState by viewModel.currentUserState.collectAsState()
     val context = LocalContext.current
     var dialogState by remember { mutableStateOf<DialogState>(DialogState.Hidden) }
-    var username by remember { mutableStateOf(String.empty) }
-    var password by remember { mutableStateOf(String.empty) }
 
     LaunchedEffect(Unit) {
         viewModel.uiEvent.collect { event ->
@@ -76,11 +74,9 @@ fun LoginScreen(sharedUserViewModel: SharedUserViewModel, onNavigateToHome: () -
     LoginScreenContent(
         uiState = uiState,
         dialogState = dialogState,
-        username = username,
-        password = password,
-        onUsernameChange = { username = it },
-        onPasswordChange = { password = it },
-        onLoginClick = { viewModel.login(username, password) },
+        onUsernameChange = { viewModel.onIntent(LoginIntent.UserNameChanged(it)) },
+        onPasswordChange = { viewModel.onIntent(LoginIntent.PasswordChanged(it)) },
+        onLoginClick = { viewModel.onIntent(LoginIntent.Submit) },
         onDismissDialog = { dialogState = DialogState.Hidden }
     )
 }
