@@ -57,7 +57,7 @@ class LoginViewModel @Inject constructor(
         _uiState.value = reduceIntent(_uiState.value, intent)
     }
 
-    fun login() {
+    private fun login() {
         _currentUserState.value = CurrentUserState.Loading
         viewModelScope.launch {
             when (val result = repository.login(_uiState.value.userName, _uiState.value.password)) {
