@@ -12,6 +12,7 @@
     <string name="error_title_local_storage">Server error</string>
     <string name="error_body_local_storage">An unexpected error occurred while saving your data. Please try again shortly.</string>
     <string name="welcome_user">Welcome %1$s</string>">
+    <string name="user_not_authenticated">User not authenticated</string>">
     <string name="email">Email: %1$s</string>
     <string name="error">Error</string>
     <string name="ok">OK</string>
