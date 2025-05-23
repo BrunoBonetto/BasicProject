@@ -33,15 +33,13 @@ import com.example.basicproject.login.ui.state.LoginUiState
 fun LoginScreenContent(
     uiState: LoginUiState,
     dialogState: DialogState,
-    username: String,
-    password: String,
     onUsernameChange: (String) -> Unit,
     onPasswordChange: (String) -> Unit,
     onLoginClick: () -> Unit,
     onDismissDialog: () -> Unit
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
-        if (uiState is LoginUiState.Loading) {
+        if (uiState.isLoading) {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -68,7 +66,7 @@ fun LoginScreenContent(
                 Spacer(modifier = Modifier.height(16.dp))
 
                 OutlinedTextField(
-                    value = username,
+                    value = uiState.userName,
                     onValueChange = onUsernameChange,
                     label = { Text(stringResource(R.string.username)) },
                     modifier = Modifier.fillMaxWidth()
@@ -77,7 +75,7 @@ fun LoginScreenContent(
                 Spacer(modifier = Modifier.height(16.dp))
 
                 OutlinedTextField(
-                    value = password,
+                    value = uiState.password,
                     onValueChange = onPasswordChange,
                     label = { Text(stringResource(R.string.password)) },
                     modifier = Modifier.fillMaxWidth(),
@@ -111,10 +109,8 @@ fun LoginScreenContent(
 fun LoginScreenPreview() {
     MaterialTheme {
         LoginScreenContent(
-            uiState = LoginUiState.Idle,
+            uiState = LoginUiState(),
             dialogState = DialogState.Hidden,
-            username = "",
-            password = "",
             onUsernameChange = {},
             onPasswordChange = {},
             onLoginClick = {},

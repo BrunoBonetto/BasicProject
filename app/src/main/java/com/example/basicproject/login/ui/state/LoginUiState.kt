@@ -1,6 +1,8 @@
 package com.example.basicproject.login.ui.state
 
-sealed class LoginUiState {
-    object Idle : LoginUiState()
-    object Loading : LoginUiState()
-}
+data  class LoginUiState(
+    val userName: String = "",
+    val password: String = "",
+    val isLoading: Boolean = false,
+    val errorMessage: String? = null
+)

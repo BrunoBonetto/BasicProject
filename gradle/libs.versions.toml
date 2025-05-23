@@ -20,7 +20,9 @@ hiltNavigationCompose = "1.1.0"
 datastoreCoreAndroid = "1.1.5"
 room = "2.7.1"
 security-crypto = "1.1.0-alpha06"
-
+kotlinx-coroutines-test = "1.7.3"
+mockk = "1.13.5"
+turbine = "1.0.0"
 
 [libraries]
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activity-compose" }
@@ -53,6 +55,9 @@ room-compiler = { group = "androidx.room", name = "room-compiler", version.ref =
 room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
 androidx-room-common-jvm = { group = "androidx.room", name = "room-common-jvm", version.ref = "room" }
 security-crypto = { group = "androidx.security", name = "security-crypto", version.ref = "security-crypto" }
+kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "kotlinx-coroutines-test" }
+mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
+turbine = { group = "app.cash.turbine", name = "turbine", version.ref = "turbine" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
