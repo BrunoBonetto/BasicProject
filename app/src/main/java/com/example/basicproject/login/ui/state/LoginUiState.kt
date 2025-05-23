@@ -1,6 +1,6 @@
 package com.example.basicproject.login.ui.state
 
-data  class LoginUiState(
+data class LoginUiState(
     val userName: String = "",
     val password: String = "",
     val isLoading: Boolean = false,

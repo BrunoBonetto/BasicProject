@@ -7,6 +7,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.basicproject.home.ui.state.HomeIntent
 import com.example.basicproject.user.domain.model.UserState
 import com.example.basicproject.user.presentation.SharedUserViewModel
 import com.example.basicproject.user.presentation.state.CurrentUserState
@@ -19,13 +20,15 @@ fun HomeScreen(
 
     val viewModel: HomeViewModel = hiltViewModel()
     val currentUserState by viewModel.currentUserState.collectAsState()
+    val uiState by viewModel.uiState.collectAsState()
 
     BackHandler(enabled = true){}
 
     LaunchedEffect(Unit) {
         val userState = sharedUserViewModel.userState
         if (userState is UserState.LoggedIn) {
-            viewModel.setUser(userState.user)
+            viewModel.onIntent(HomeIntent.SetUser(userState.user))
+            viewModel.onIntent(HomeIntent.LoadProducts)
         }
     }
 
@@ -63,8 +66,9 @@ fun HomeScreen(
 
     HomeScreenContent(
         userState = userState,
+        homeUiState = uiState,
         onLogoutClick = {
-            viewModel.logout()
+            viewModel.onIntent(HomeIntent.Logout)
         }
     )
 }
