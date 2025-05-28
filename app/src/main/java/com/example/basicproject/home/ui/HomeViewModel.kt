@@ -9,8 +9,6 @@ import com.example.basicproject.home.ui.state.HomeIntent
 import com.example.basicproject.home.ui.state.HomeUiState
 import com.example.basicproject.home.ui.state.reduceResult
 import com.example.basicproject.user.data.local.repository.UserRepository
-import com.example.basicproject.user.data.remote.entity.UserEntity
-import com.example.basicproject.user.presentation.state.CurrentUserState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -28,9 +26,6 @@ class HomeViewModel @Inject constructor(
     private val sessionManager: SessionManager
 ) : ViewModel() {
 
-    private val _currentUserState = MutableStateFlow<CurrentUserState>(CurrentUserState.Unloaded)
-    val currentUserState: StateFlow<CurrentUserState> = _currentUserState.asStateFlow()
-
     private val _uiEvent = MutableSharedFlow<HomeUiEvent>()
     val uiEvent: SharedFlow<HomeUiEvent> = _uiEvent.asSharedFlow()
 
@@ -44,7 +39,6 @@ class HomeViewModel @Inject constructor(
             }
 
             is HomeIntent.Logout -> logout()
-            is HomeIntent.SetUser -> setUser(intent.user)
         }
     }
 
@@ -66,17 +60,11 @@ class HomeViewModel @Inject constructor(
             try {
                 userRepository.clearUser()
                 sessionManager.clearSession()
-                _currentUserState.value = CurrentUserState.Unloaded
                 _uiEvent.emit(HomeUiEvent.LogoutSuccess)
             } catch (e: Exception) {
-                _currentUserState.value = CurrentUserState.Error
                 _uiEvent.emit(HomeUiEvent.LogoutError)
             }
         }
-    }
-
-    private fun setUser(user: UserEntity) {
-        _currentUserState.value = CurrentUserState.Success(user)
     }
 
 }

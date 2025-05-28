@@ -5,12 +5,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.basicproject.home.ui.state.HomeIntent
-import com.example.basicproject.user.domain.model.UserState
 import com.example.basicproject.user.presentation.SharedUserViewModel
-import com.example.basicproject.user.presentation.state.CurrentUserState
 
 @Composable
 fun HomeScreen(
@@ -19,17 +16,13 @@ fun HomeScreen(
 ) {
 
     val viewModel: HomeViewModel = hiltViewModel()
-    val currentUserState by viewModel.currentUserState.collectAsState()
+    val currentUserState by sharedUserViewModel.currentUserState.collectAsState()
     val uiState by viewModel.uiState.collectAsState()
 
-    BackHandler(enabled = true){}
+    BackHandler(enabled = true) {}
 
     LaunchedEffect(Unit) {
-        val userState = sharedUserViewModel.userState
-        if (userState is UserState.LoggedIn) {
-            viewModel.onIntent(HomeIntent.SetUser(userState.user))
-            viewModel.onIntent(HomeIntent.LoadProducts)
-        }
+        viewModel.onIntent(HomeIntent.LoadProducts)
     }
 
     LaunchedEffect(Unit) {
@@ -37,35 +30,16 @@ fun HomeScreen(
             when (event) {
                 is HomeUiEvent.LogoutSuccess -> {
                     onNavigateToLogin()
+                    sharedUserViewModel.clearUser()
                 }
 
-                is HomeUiEvent.LogoutError -> {
-
-                }
+                is HomeUiEvent.LogoutError -> {}
             }
-        }
-    }
-
-    LaunchedEffect(currentUserState) {
-        when (currentUserState) {
-            is CurrentUserState.Success -> {}
-            is CurrentUserState.Loading -> Unit
-            CurrentUserState.Error -> Unit
-            CurrentUserState.Unloaded -> {
-                sharedUserViewModel.clearUser()
-            }
-        }
-    }
-
-    val userState = remember(currentUserState) {
-        when (currentUserState) {
-            is CurrentUserState.Success -> UserState.LoggedIn((currentUserState as CurrentUserState.Success).user)
-            else -> UserState.NotLoggedIn
         }
     }
 
     HomeScreenContent(
-        userState = userState,
+        userState = currentUserState,
         homeUiState = uiState,
         onLogoutClick = {
             viewModel.onIntent(HomeIntent.Logout)
