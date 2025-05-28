@@ -30,7 +30,7 @@ class ProductDetailViewModel @Inject constructor(
         viewModelScope.launch {
             when (val result = repository.getProduct(productId)) {
                 is ProductResult.Success -> _uiState.value =
-                    ProductDetailUiState(false, String.empty, result.product)
+                    ProductDetailUiState(false, null, result.product)
 
                 is ProductResult.ServerError -> _uiState.value =
                     ProductDetailUiState(false, result.error, null)

@@ -23,22 +23,21 @@ import coil.compose.AsyncImage
 import com.example.basicproject.R
 import com.example.basicproject.home.data.remote.model.ProductEntity
 
-
 @Composable
 fun ProductDetailScreenPreviewContent(
     productDetailUiState: ProductDetailUiState
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
 
-        if(productDetailUiState.isLoading){
+        if (productDetailUiState.isLoading) {
             CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-        }else if(productDetailUiState.errorMessage != null){
+        } else if (productDetailUiState.errorMessage != null) {
             Text(
                 text = stringResource(R.string.error_loading_product),
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.primary
             )
-        }else{
+        } else {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -73,7 +72,7 @@ fun ProductDetailScreenPreviewContent(
                 Spacer(modifier = Modifier.height(12.dp))
 
                 Text(
-                    text = "Descrição do produto indisponível no momento.",
+                    text = productDetailUiState.product?.description.toString(),
                     style = MaterialTheme.typography.bodyMedium
                 )
             }
@@ -88,7 +87,8 @@ fun ProductDetailScreenPreview() {
         id = 1,
         title = "Smartphone Android 13",
         price = 1999.99,
-        thumbnail = "https://dummyjson.com/image/i/products/1/thumbnail.jpg"
+        thumbnail = "https://dummyjson.com/image/i/products/1/thumbnail.jpg",
+        description = "descritions test"
     )
 
     val mockProductUiState = ProductDetailUiState(
