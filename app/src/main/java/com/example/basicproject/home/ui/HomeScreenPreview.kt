@@ -35,7 +35,8 @@ import com.example.basicproject.user.presentation.state.CurrentUserState
 fun HomeScreenContent(
     userState: CurrentUserState,
     homeUiState: HomeUiState,
-    onLogoutClick: () -> Unit
+    onLogoutClick: () -> Unit,
+    onProductClick: (Int) -> Unit
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
         when (userState) {
@@ -63,7 +64,7 @@ fun HomeScreenContent(
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         items(homeUiState.products) { product ->
-                            ProductItem(product)
+                            ProductItem(product = product, onClick = { onProductClick(product.id) })
                         }
                     }
 
@@ -86,7 +87,7 @@ fun HomeScreenContent(
             CurrentUserState.Unloaded -> {
                 if (homeUiState.isLoading) {
                     CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-                }else{
+                } else {
                     Text(
                         text = stringResource(R.string.user_not_authenticated),
                         modifier = Modifier.align(Alignment.Center)
@@ -97,7 +98,7 @@ fun HomeScreenContent(
             CurrentUserState.Error -> {
                 if (homeUiState.isLoading) {
                     CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-                }else{
+                } else {
                     Text(
                         text = stringResource(R.string.user_not_authenticated),
                         modifier = Modifier.align(Alignment.Center)
@@ -124,6 +125,7 @@ fun HomeScreenPreview() {
             )
         ),
         homeUiState = HomeUiState(isLoading = false),
-        onLogoutClick = {}
+        onLogoutClick = {},
+        onProductClick = {}
     )
 }

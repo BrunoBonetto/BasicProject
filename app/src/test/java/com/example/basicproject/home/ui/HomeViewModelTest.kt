@@ -4,7 +4,7 @@ import app.cash.turbine.test
 import com.example.basicproject.core.session.domain.SessionManager
 import com.example.basicproject.home.data.TestProductFactory
 import com.example.basicproject.home.domain.repository.HomeRepository
-import com.example.basicproject.home.domain.result.ProductResult
+import com.example.basicproject.home.domain.result.ListProductsResult
 import com.example.basicproject.home.ui.state.HomeIntent
 import com.example.basicproject.user.data.local.repository.UserRepository
 import io.mockk.coEvery
@@ -45,7 +45,7 @@ class HomeViewModelTest {
     @Test
     fun `when LoadProducts is triggered, uiState should contain product list`() = runTest {
         val fakeProducts = listOf(TestProductFactory.create())
-        coEvery { homeRepository.getProducts() } returns ProductResult.Success(fakeProducts)
+        coEvery { homeRepository.getListProducts() } returns ListProductsResult.Success(fakeProducts)
 
         viewModel.onIntent(HomeIntent.LoadProducts)
 
@@ -60,7 +60,7 @@ class HomeViewModelTest {
     @Test
     fun `when LoadProducts fails, uiState should contain error`() = runTest {
         val error = "Erro ao carregar"
-        coEvery { homeRepository.getProducts() } returns ProductResult.ServerError(error)
+        coEvery { homeRepository.getListProducts() } returns ListProductsResult.ServerError(error)
 
         viewModel.onIntent(HomeIntent.LoadProducts)
 

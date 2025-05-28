@@ -1,16 +1,16 @@
 package com.example.basicproject.home.ui.state
 
-import com.example.basicproject.home.domain.result.ProductResult
+import com.example.basicproject.home.domain.result.ListProductsResult
 
-fun reduceResult(state: HomeUiState, result: ProductResult): HomeUiState {
+fun reduceResult(state: HomeUiState, result: ListProductsResult): HomeUiState {
     return when (result) {
-        is ProductResult.Success -> state.copy(
+        is ListProductsResult.Success -> state.copy(
             isLoading = false,
             errorMessage = null,
             result.products
         )
 
-        is ProductResult.ServerError -> state.copy(
+        is ListProductsResult.ServerError -> state.copy(
             isLoading = false,
             errorMessage = result.error,
             emptyList()
