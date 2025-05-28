@@ -29,17 +29,17 @@ import com.example.basicproject.R
 import com.example.basicproject.home.ui.components.ProductItem
 import com.example.basicproject.home.ui.state.HomeUiState
 import com.example.basicproject.user.data.remote.entity.UserEntity
-import com.example.basicproject.user.domain.model.UserState
+import com.example.basicproject.user.presentation.state.CurrentUserState
 
 @Composable
 fun HomeScreenContent(
-    userState: UserState,
+    userState: CurrentUserState,
     homeUiState: HomeUiState,
     onLogoutClick: () -> Unit
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
         when (userState) {
-            is UserState.LoggedIn -> {
+            is CurrentUserState.Success -> {
                 val user = userState.user
 
                 Column(modifier = Modifier.fillMaxSize()) {
@@ -83,11 +83,30 @@ fun HomeScreenContent(
                 }
             }
 
-            UserState.NotLoggedIn -> {
-                Text(
-                    text = stringResource(R.string.user_not_authenticated),
-                    modifier = Modifier.align(Alignment.Center)
-                )
+            CurrentUserState.Unloaded -> {
+                if (homeUiState.isLoading) {
+                    CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+                }else{
+                    Text(
+                        text = stringResource(R.string.user_not_authenticated),
+                        modifier = Modifier.align(Alignment.Center)
+                    )
+                }
+            }
+
+            CurrentUserState.Error -> {
+                if (homeUiState.isLoading) {
+                    CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+                }else{
+                    Text(
+                        text = stringResource(R.string.user_not_authenticated),
+                        modifier = Modifier.align(Alignment.Center)
+                    )
+                }
+            }
+
+            CurrentUserState.Loading -> {
+                CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
             }
         }
     }
@@ -97,7 +116,7 @@ fun HomeScreenContent(
 @Composable
 fun HomeScreenPreview() {
     HomeScreenContent(
-        userState = UserState.LoggedIn(
+        userState = CurrentUserState.Success(
             user = UserEntity(
                 1,
                 "John Doe",
