@@ -7,7 +7,6 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.example.basicproject.user.presentation.SharedUserViewModel
 import com.example.basicproject.home.ui.HomeScreen
-import com.example.basicproject.login.navigation.LoginNavRoutes
 import com.example.basicproject.main.navigations.SessionNavRoutes
 
 fun NavGraphBuilder.homeGraph(navController: NavController) {
@@ -22,17 +21,9 @@ fun NavGraphBuilder.homeGraph(navController: NavController) {
         HomeScreen(
             sharedUserViewModel = sharedUserViewModel,
             onNavigateToLogin = {
-                navController.navigate(LoginNavRoutes.Login.route) {
-                    popUpTo(LoginNavRoutes.Login.route) { inclusive = true }
-                }
+                navController.navigate(SessionNavRoutes.Root.route)
             }
         )
     }
 
-    /*
-    composable(NavRoutes.Profile.route) {
-        val profileViewModel: ProfileViewModel = hiltViewModel()
-        ProfileScreen(viewModel = profileViewModel)
-    }
-     */
 }

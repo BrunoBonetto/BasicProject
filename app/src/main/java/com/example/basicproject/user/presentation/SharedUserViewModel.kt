@@ -1,24 +1,23 @@
 package com.example.basicproject.user.presentation
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.example.basicproject.user.data.remote.entity.UserEntity
-import com.example.basicproject.user.domain.model.UserState
+import com.example.basicproject.user.presentation.state.CurrentUserState
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class SharedUserViewModel @Inject constructor() : ViewModel() {
-    var userState by mutableStateOf<UserState>(UserState.NotLoggedIn)
-        private set
+    private val _currentUserState = MutableStateFlow<CurrentUserState>(CurrentUserState.Unloaded)
+    val currentUserState = _currentUserState.asStateFlow()
 
-    fun setUser(user: UserEntity) {
-        userState = UserState.LoggedIn(user)
+    fun clearUser() {
+        _currentUserState.value = CurrentUserState.Unloaded
     }
 
-    fun clearUser(){
-        userState = UserState.NotLoggedIn
+    fun setUser(user: UserEntity) {
+        _currentUserState.value = CurrentUserState.Success(user)
     }
 }
