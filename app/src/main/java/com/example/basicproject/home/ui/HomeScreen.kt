@@ -12,7 +12,8 @@ import com.example.basicproject.user.presentation.SharedUserViewModel
 @Composable
 fun HomeScreen(
     sharedUserViewModel: SharedUserViewModel,
-    onNavigateToLogin: () -> Unit
+    onNavigateToLogin: () -> Unit,
+    onNavigateToProductDetail: (Int) -> Unit
 ) {
 
     val viewModel: HomeViewModel = hiltViewModel()
@@ -41,8 +42,7 @@ fun HomeScreen(
     HomeScreenContent(
         userState = currentUserState,
         homeUiState = uiState,
-        onLogoutClick = {
-            viewModel.onIntent(HomeIntent.Logout)
-        }
+        onLogoutClick = { viewModel.onIntent(HomeIntent.Logout) },
+        onProductClick = onNavigateToProductDetail
     )
 }
