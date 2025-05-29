@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.basicproject.core.session.domain.SessionManager
 import com.example.basicproject.home.domain.repository.HomeRepository
-import com.example.basicproject.home.domain.result.ProductResult
+import com.example.basicproject.home.domain.result.ListProductsResult
 import com.example.basicproject.home.ui.state.HomeIntent
 import com.example.basicproject.home.ui.state.HomeUiState
 import com.example.basicproject.home.ui.state.reduceResult
@@ -45,12 +45,12 @@ class HomeViewModel @Inject constructor(
     private fun loadProducts() {
         _uiState.value = _uiState.value.copy(isLoading = true)
         viewModelScope.launch {
-            when (val result = repository.getProducts()) {
-                is ProductResult.Success -> _uiState.value =
-                    reduceResult(_uiState.value, ProductResult.Success(result.products))
+            when (val result = repository.getListProducts()) {
+                is ListProductsResult.Success -> _uiState.value =
+                    reduceResult(_uiState.value, ListProductsResult.Success(result.products))
 
-                is ProductResult.ServerError -> _uiState.value =
-                    reduceResult(_uiState.value, ProductResult.ServerError(result.error))
+                is ListProductsResult.ServerError -> _uiState.value =
+                    reduceResult(_uiState.value, ListProductsResult.ServerError(result.error))
             }
         }
     }

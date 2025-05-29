@@ -89,10 +89,13 @@ dependencies {
     //EncryptedSharedPreferences
     implementation(libs.security.crypto)
 
-    //tests
+    //Tests
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.mockk)
     testImplementation(libs.turbine)
     testImplementation(kotlin("test"))
+
+    //Pager
+    implementation(libs.compose.foundation)
 
 }
