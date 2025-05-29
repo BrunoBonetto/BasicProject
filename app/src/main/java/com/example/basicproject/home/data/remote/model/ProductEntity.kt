@@ -5,7 +5,8 @@ data class ProductEntity (
     val title: String,
     val price: Double,
     val thumbnail: String,
-    val description: String
+    val description: String,
+    val images: List<String> = emptyList()
 )
 
 
