@@ -3,6 +3,7 @@ package com.example.basicproject.login.ui
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.basicproject.core.session.domain.SessionManager
+import com.example.basicproject.login.data.remote.model.LoginResponse
 import com.example.basicproject.login.data.remote.model.toEntity
 import com.example.basicproject.login.domain.repository.LoginRepository
 import com.example.basicproject.login.domain.result.LoginResult
@@ -63,44 +64,37 @@ class LoginViewModel @Inject constructor(
             when (val result = repository.login(_uiState.value.userName, _uiState.value.password)) {
                 is LoginResult.Success -> {
                     try {
-                        userRepository.saveUser(result.user.toEntity())
-                        sessionManager.saveSession(result.user.accessToken)
-                        _currentUserState.value = reduceUserState(result)
-                        _uiState.value =
-                            reduceResult(_uiState.value, LoginResult.Success(result.user))
-                        _uiEvent.emit(LoginUiEvent.LoginSuccess)
+                        handleLoginSuccess(result.user)
                     } catch (e: Exception) {
-                        _currentUserState.value = CurrentUserState.Error
-                        _uiState.value = reduceResult(
-                            _uiState.value,
-                            LoginResult.ServerError(e.message.toString())
-                        )
+                        handleLoginFailure(LoginResult.ServerError(e.message.toString()))
                         _uiEvent.emit(LoginUiEvent.ShowLocalStorageError)
-                        // Not strictly necessary now, but included as a safeguard:
-                        // if any code is added below this block in the future, this ensures it won't run after a failure.
-                        return@launch
                     }
                 }
 
-                LoginResult.InvalidCredentials -> {
-                    _currentUserState.value = reduceUserState(result)
-                    _uiState.value = reduceResult(_uiState.value, LoginResult.InvalidCredentials)
-                    _uiEvent.emit(LoginUiEvent.ShowInvalidCredentials)
-                }
-
-                is LoginResult.ServerError -> {
-                    _currentUserState.value = reduceUserState(result)
-                    _uiState.value =
-                        reduceResult(_uiState.value, LoginResult.ServerError(result.error))
-                    _uiEvent.emit(LoginUiEvent.ShowServerError(result.error))
-                }
-
-                LoginResult.EmptyResponse -> {
-                    _currentUserState.value = reduceUserState(result)
-                    _uiState.value = reduceResult(_uiState.value, LoginResult.EmptyResponse)
-                    _uiEvent.emit(LoginUiEvent.ShowEmptyResponse)
-                }
+                else -> handleLoginFailure(result)
             }
         }
     }
+
+    private suspend fun handleLoginSuccess(user: LoginResponse) {
+        userRepository.saveUser(user.toEntity())
+        sessionManager.saveSession(user.accessToken)
+        _currentUserState.value = reduceUserState(LoginResult.Success(user))
+        _uiState.value = reduceResult(_uiState.value, LoginResult.Success(user))
+        _uiEvent.emit(LoginUiEvent.LoginSuccess)
+    }
+
+
+    private suspend fun handleLoginFailure(result: LoginResult) {
+        _currentUserState.value = reduceUserState(result)
+        _uiState.value = reduceResult(_uiState.value, result)
+        val event = when (result) {
+            LoginResult.InvalidCredentials -> LoginUiEvent.ShowInvalidCredentials
+            is LoginResult.ServerError -> LoginUiEvent.ShowServerError(result.error)
+            LoginResult.EmptyResponse -> LoginUiEvent.ShowEmptyResponse
+            else -> return
+        }
+        _uiEvent.emit(event)
+    }
+
 }
