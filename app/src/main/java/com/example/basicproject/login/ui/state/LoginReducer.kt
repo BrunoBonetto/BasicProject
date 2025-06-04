@@ -2,7 +2,7 @@ package com.example.basicproject.login.ui.state
 
 import com.example.basicproject.login.data.remote.model.toEntity
 import com.example.basicproject.login.domain.result.LoginResult
-import com.example.basicproject.user.presentation.state.CurrentUserState
+import com.example.basicproject.user.ui.state.CurrentUserState
 
 fun reduceIntent(state: LoginUiState, intent: LoginIntent): LoginUiState {
     return when (intent) {

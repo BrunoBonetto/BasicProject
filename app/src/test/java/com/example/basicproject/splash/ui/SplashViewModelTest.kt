@@ -4,9 +4,8 @@ import app.cash.turbine.test
 import com.example.basicproject.core.session.domain.result.SessionValidationResult
 import com.example.basicproject.core.session.domain.usecase.RevalidateSessionUseCase
 import com.example.basicproject.login.data.TestLoginResponseFactory
-import com.example.basicproject.login.data.remote.model.LoginResponse
 import com.example.basicproject.login.data.remote.model.toEntity
-import com.example.basicproject.user.presentation.state.CurrentUserState
+import com.example.basicproject.user.ui.state.CurrentUserState
 import io.mockk.coEvery
 import io.mockk.mockk
 import junit.framework.TestCase.assertEquals

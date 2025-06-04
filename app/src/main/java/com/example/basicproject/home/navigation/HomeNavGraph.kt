@@ -8,9 +8,10 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.basicproject.home.ui.HomeScreen
+import com.example.basicproject.home.ui.HomeViewModel
 import com.example.basicproject.main.navigations.SessionNavRoutes
 import com.example.basicproject.product.ui.ProductDetailScreen
-import com.example.basicproject.user.presentation.SharedUserViewModel
+import com.example.basicproject.user.ui.SharedUserViewModel
 
 fun NavGraphBuilder.homeGraph(navController: NavController) {
 
@@ -19,10 +20,9 @@ fun NavGraphBuilder.homeGraph(navController: NavController) {
             navController.getBackStackEntry(SessionNavRoutes.Root.route)
         }
 
-        val sharedUserViewModel = hiltViewModel<SharedUserViewModel>(parentEntry)
-
         HomeScreen(
-            sharedUserViewModel = sharedUserViewModel,
+            viewModel = hiltViewModel<HomeViewModel>(),
+            sharedUserViewModel = hiltViewModel<SharedUserViewModel>(parentEntry),
             onNavigateToLogin = {
                 navController.navigate(SessionNavRoutes.Root.route)
             },
