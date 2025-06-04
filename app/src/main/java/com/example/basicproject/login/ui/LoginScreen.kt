@@ -8,16 +8,18 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.basicproject.R
 import com.example.basicproject.core.presentation.components.dialogs.DialogState
-import com.example.basicproject.user.presentation.SharedUserViewModel
 import com.example.basicproject.login.ui.state.LoginIntent
-import com.example.basicproject.user.presentation.state.CurrentUserState
+import com.example.basicproject.user.ui.SharedUserViewModel
+import com.example.basicproject.user.ui.state.CurrentUserState
 
 @Composable
-fun LoginScreen(sharedUserViewModel: SharedUserViewModel, onNavigateToHome: () -> Unit) {
-    val viewModel: LoginViewModel = hiltViewModel()
+fun LoginScreen(
+    viewModel: LoginViewModel,
+    sharedUserViewModel: SharedUserViewModel,
+    onNavigateToHome: () -> Unit
+) {
     val uiState by viewModel.uiState.collectAsState()
     val currentUserState by viewModel.currentUserState.collectAsState()
     val context = LocalContext.current
@@ -30,21 +32,25 @@ fun LoginScreen(sharedUserViewModel: SharedUserViewModel, onNavigateToHome: () -
                     onNavigateToHome()
                     DialogState.Hidden
                 }
+
                 is LoginUiEvent.ShowInvalidCredentials -> DialogState.Show(
                     tittle = context.getString(R.string.error_title_invalid_credentials),
                     message = context.getString(R.string.error_body_invalid_credentials),
                     buttonText = context.getString(R.string.ok)
                 )
+
                 is LoginUiEvent.ShowEmptyResponse -> DialogState.Show(
                     tittle = context.getString(R.string.error_title_empty_response),
                     message = context.getString(R.string.error_body_empty_response),
                     buttonText = context.getString(R.string.ok)
                 )
+
                 is LoginUiEvent.ShowServerError -> DialogState.Show(
                     tittle = context.getString(R.string.error_title_server),
                     message = context.getString(R.string.error_body_server),
                     buttonText = context.getString(R.string.ok)
                 )
+
                 is LoginUiEvent.ShowLocalStorageError -> DialogState.Show(
                     tittle = context.getString(R.string.error_title_local_storage),
                     message = context.getString(R.string.error_body_local_storage),
@@ -59,12 +65,15 @@ fun LoginScreen(sharedUserViewModel: SharedUserViewModel, onNavigateToHome: () -
             is CurrentUserState.Success -> {
                 sharedUserViewModel.setUser((currentUserState as CurrentUserState.Success).user)
             }
+
             is CurrentUserState.Loading -> {
 
             }
+
             is CurrentUserState.Unloaded -> {
 
             }
+
             is CurrentUserState.Error -> {
 
             }

@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.basicproject.core.session.domain.result.SessionValidationResult
 import com.example.basicproject.core.session.domain.usecase.RevalidateSessionUseCase
 import com.example.basicproject.login.data.remote.model.toEntity
-import com.example.basicproject.user.presentation.state.CurrentUserState
+import com.example.basicproject.user.ui.state.CurrentUserState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow

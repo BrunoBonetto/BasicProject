@@ -13,7 +13,7 @@ import com.example.basicproject.login.ui.state.reduceIntent
 import com.example.basicproject.login.ui.state.reduceResult
 import com.example.basicproject.login.ui.state.reduceUserState
 import com.example.basicproject.user.data.local.repository.UserRepository
-import com.example.basicproject.user.presentation.state.CurrentUserState
+import com.example.basicproject.user.ui.state.CurrentUserState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow

@@ -29,7 +29,7 @@ import com.example.basicproject.R
 import com.example.basicproject.home.ui.components.ProductItem
 import com.example.basicproject.home.ui.state.HomeUiState
 import com.example.basicproject.user.data.remote.entity.UserEntity
-import com.example.basicproject.user.presentation.state.CurrentUserState
+import com.example.basicproject.user.ui.state.CurrentUserState
 
 @Composable
 fun HomeScreenContent(
