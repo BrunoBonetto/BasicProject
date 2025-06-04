@@ -3,8 +3,7 @@ package com.example.basicproject.user.ui
 import app.cash.turbine.test
 import com.example.basicproject.login.data.TestLoginResponseFactory
 import com.example.basicproject.login.data.remote.model.toEntity
-import com.example.basicproject.user.presentation.SharedUserViewModel
-import com.example.basicproject.user.presentation.state.CurrentUserState
+import com.example.basicproject.user.ui.state.CurrentUserState
 import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest

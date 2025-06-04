@@ -11,7 +11,7 @@ import com.example.basicproject.login.ui.state.LoginIntent
 import com.example.basicproject.login.ui.state.LoginUiState
 import com.example.basicproject.login.ui.state.reduceUserState
 import com.example.basicproject.user.data.local.repository.UserRepository
-import com.example.basicproject.user.presentation.state.CurrentUserState
+import com.example.basicproject.user.ui.state.CurrentUserState
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.just

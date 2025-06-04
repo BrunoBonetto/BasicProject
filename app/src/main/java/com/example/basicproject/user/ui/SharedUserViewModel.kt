@@ -1,8 +1,8 @@
-package com.example.basicproject.user.presentation
+package com.example.basicproject.user.ui
 
 import androidx.lifecycle.ViewModel
 import com.example.basicproject.user.data.remote.entity.UserEntity
-import com.example.basicproject.user.presentation.state.CurrentUserState
+import com.example.basicproject.user.ui.state.CurrentUserState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import javax.inject.Inject

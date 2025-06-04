@@ -1,4 +1,4 @@
-package com.example.basicproject.user.presentation.state
+package com.example.basicproject.user.ui.state
 
 import com.example.basicproject.user.data.remote.entity.UserEntity
 
