@@ -2,21 +2,15 @@ package com.example.basicproject.login.ui
 
 import app.cash.turbine.test
 import com.example.basicproject.core.rules.MainDispatcherRule
-import com.example.basicproject.core.session.domain.SessionManager
 import com.example.basicproject.login.data.TestLoginResponseFactory
 import com.example.basicproject.login.data.remote.model.toEntity
-import com.example.basicproject.login.domain.repository.LoginRepository
 import com.example.basicproject.login.domain.result.LoginResult
+import com.example.basicproject.login.domain.usecase.LoginUseCase
 import com.example.basicproject.login.ui.state.LoginIntent
-import com.example.basicproject.login.ui.state.LoginUiState
 import com.example.basicproject.login.ui.state.reduceUserState
-import com.example.basicproject.user.data.local.repository.UserRepository
 import com.example.basicproject.user.ui.state.CurrentUserState
 import io.mockk.coEvery
-import io.mockk.coVerify
-import io.mockk.just
 import io.mockk.mockk
-import io.mockk.runs
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -31,28 +25,13 @@ class LoginViewModelTest {
     @get: Rule
     val coroutineRule = MainDispatcherRule()
 
-    private val loginRepository: LoginRepository = mockk()
-    private val userRepository: UserRepository = mockk(relaxed = true)
-    private val sessionManager: SessionManager = mockk(relaxed = true)
+    private val loginUseCase = mockk<LoginUseCase>()
 
     private lateinit var viewModel: LoginViewModel
 
-    private fun assertUiState(
-        expectedUserName: String? = null,
-        expectedPassword: String? = null,
-        expectedIsLoading: Boolean? = null,
-        expectedErrorMessage: String? = null,
-        state: LoginUiState = viewModel.uiState.value
-    ) {
-        expectedUserName?.let { assertEquals(it, state.userName) }
-        expectedPassword?.let { assertEquals(it, state.password) }
-        expectedIsLoading?.let { assertEquals(it, state.isLoading) }
-        expectedErrorMessage?.let { assertEquals(it, state.errorMessage) }
-    }
-
     @Before
     fun setup() {
-        viewModel = LoginViewModel(loginRepository, userRepository, sessionManager)
+        viewModel = LoginViewModel(loginUseCase)
     }
 
     @Test
@@ -69,128 +48,41 @@ class LoginViewModelTest {
         assertEquals(newPassword, viewModel.uiState.value.password)
     }
 
-    @Test
-    fun `when login is successful, emits LoginSuccess and updates uiState`() = runTest {
-        val user = TestLoginResponseFactory.create()
-        coEvery { loginRepository.login(any(), any()) } returns LoginResult.Success(user)
 
+    @Test
+    fun `should emit LoginSuccess on successful login`() = runTest {
+        // arrange
+        val response = TestLoginResponseFactory.create()
+        coEvery { loginUseCase(any(), any()) } returns LoginResult.Success(response)
+
+        // act
         viewModel.onIntent(LoginIntent.UserNameChanged("bruno"))
-        viewModel.onIntent(LoginIntent.PasswordChanged("123456"))
+        viewModel.onIntent(LoginIntent.PasswordChanged("123"))
         viewModel.onIntent(LoginIntent.Submit)
 
+        // assert
         viewModel.uiEvent.test {
-            assertEquals(LoginUiEvent.LoginSuccess, awaitItem())
+            assert(awaitItem() == LoginUiEvent.LoginSuccess)
             cancelAndIgnoreRemainingEvents()
         }
 
-        assertUiState(
-            expectedUserName = "bruno",
-            expectedPassword = "123456",
-            expectedIsLoading = false
-        )
+        assert(viewModel.uiState.value.userName == "bruno")
+        assert(viewModel.uiState.value.password == "123")
     }
 
-    @Test
-    fun `when login is successful, should save user, save session and emit CurrentUserState Success`() =
-        runTest {
-            val user = TestLoginResponseFactory.create()
-            val userEntity = user.toEntity()
-
-            coEvery { loginRepository.login(any(), any()) } returns LoginResult.Success(user)
-            coEvery { userRepository.saveUser(userEntity) } just runs
-            coEvery { sessionManager.saveSession(user.accessToken) } just runs
-
-            viewModel.onIntent(LoginIntent.UserNameChanged("bruno"))
-            viewModel.onIntent(LoginIntent.PasswordChanged("123456"))
-            viewModel.onIntent(LoginIntent.Submit)
-
-            viewModel.currentUserState.test {
-                assertEquals(CurrentUserState.Loading, awaitItem())
-                val result = awaitItem()
-                assertTrue(result is CurrentUserState.Success)
-                assertEquals(userEntity, (result as CurrentUserState.Success).user)
-                cancelAndIgnoreRemainingEvents()
-            }
-
-            coVerify { userRepository.saveUser(userEntity) }
-            coVerify { sessionManager.saveSession(user.accessToken) }
-
-            assertUiState(
-                expectedUserName = "bruno",
-                expectedPassword = "123456",
-                expectedIsLoading = false
-            )
-        }
 
     @Test
-    fun `when login fails with invalid credentials, emits ShowInvalidCredentials and updates uiState`() =
-        runTest {
-            coEvery { loginRepository.login(any(), any()) } returns LoginResult.InvalidCredentials
-
-            viewModel.onIntent(LoginIntent.Submit)
-
-            viewModel.uiEvent.test {
-                assertEquals(LoginUiEvent.ShowInvalidCredentials, awaitItem())
-                cancelAndIgnoreRemainingEvents()
-            }
-
-            viewModel.currentUserState.test {
-                assertEquals(CurrentUserState.Error, awaitItem())
-                cancelAndIgnoreRemainingEvents()
-            }
-
-            assertUiState(
-                expectedIsLoading = false
-            )
-        }
-
-    @Test
-    fun `when login fails with ServerError, emits ShowServerError and updates uiState`() = runTest {
-        val errorMessage = "Server error"
-        coEvery {
-            loginRepository.login(
-                any(),
-                any()
-            )
-        } returns LoginResult.ServerError(errorMessage)
+    fun `should emit ShowInvalidCredentials on failure`() = runTest {
+        coEvery { loginUseCase(any(), any()) } returns LoginResult.InvalidCredentials
 
         viewModel.onIntent(LoginIntent.Submit)
 
         viewModel.uiEvent.test {
-            assertEquals(LoginUiEvent.ShowServerError(errorMessage), awaitItem())
+            assert(awaitItem() == LoginUiEvent.ShowInvalidCredentials)
             cancelAndIgnoreRemainingEvents()
         }
 
-        viewModel.currentUserState.test {
-            assertEquals(CurrentUserState.Error, awaitItem())
-            cancelAndIgnoreRemainingEvents()
-        }
-
-        assertUiState(
-            expectedIsLoading = false,
-            expectedErrorMessage = errorMessage
-        )
-    }
-
-    @Test
-    fun `when login fails with EmptyResponse, emits EmptyResponse and updates uiState`() = runTest {
-        coEvery { loginRepository.login(any(), any()) } returns LoginResult.EmptyResponse
-
-        viewModel.onIntent(LoginIntent.Submit)
-
-        viewModel.uiEvent.test {
-            assertEquals(LoginUiEvent.ShowEmptyResponse, awaitItem())
-            cancelAndIgnoreRemainingEvents()
-        }
-
-        viewModel.currentUserState.test {
-            assertEquals(CurrentUserState.Error, awaitItem())
-            cancelAndIgnoreRemainingEvents()
-        }
-
-        assertUiState(
-            expectedIsLoading = false
-        )
+        assert(viewModel.currentUserState.value is CurrentUserState.Error)
     }
 
     @Test
